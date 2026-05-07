@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { ArrowLeft, Save, Loader2, User, LogOut } from 'lucide-react'
 import FileUploader from '@/components/boss/FileUploader'

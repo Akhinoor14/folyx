@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { getGitHubFile, putGitHubFile, deleteGitHubFile } from '@/lib/github'
 
 // Validate that the requester owns this clientId (Boss auth check)

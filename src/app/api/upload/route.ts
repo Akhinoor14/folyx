@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { uploadToR2, R2Keys } from '@/lib/r2'
 
 export const runtime = 'nodejs'

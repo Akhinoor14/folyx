@@ -1,7 +1,7 @@
 'use client'
 import { useState, type FormEvent } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
 import { Zap, Eye, EyeOff, AlertCircle, Lock } from 'lucide-react'
 
 export default function BossLoginPage() {

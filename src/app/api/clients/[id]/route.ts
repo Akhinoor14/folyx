@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { generatePassword, getPlanEndDate } from '@/lib/utils'
 
 interface Props { params: { id: string } }

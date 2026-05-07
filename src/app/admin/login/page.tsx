@@ -1,7 +1,7 @@
 'use client'
 import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
 import { Shield, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { FolyxLogo } from '@/components/shared/Navbar'
 

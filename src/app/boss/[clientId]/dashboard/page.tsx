@@ -1,4 +1,4 @@
-import { createServerClient } from '@/lib/supabase'
+import { createServerClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Zap, Box, Code2, Globe, BarChart2, BookOpen, FileText, Video, GraduationCap, Award, Settings, LogOut, User, Layers } from 'lucide-react'

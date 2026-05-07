@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { createClientRepo } from '@/lib/github'
 import { generateClientId } from '@/lib/utils'
 import type { NewClientFormData, ClientInfo } from '@/types/client'
