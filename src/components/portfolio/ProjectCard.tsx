@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ExternalLink, Github, Calendar, Tag } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { cn, formatDate } from '@/lib/utils'
 
 interface ProjectCardProps {
@@ -16,7 +17,7 @@ interface ProjectCardProps {
   featured?: boolean
   status?: 'completed' | 'in-progress' | 'planned'
   extraBadge?: string
-  children?: React.ReactNode
+  children?: ReactNode
 }
 
 const STATUS_STYLES = {

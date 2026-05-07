@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { Search, X, FileText, Box, BookOpen, Video } from 'lucide-react'
 import Fuse from 'fuse.js'
 import { cn } from '@/lib/utils'
@@ -67,7 +67,7 @@ export default function SearchModal({ isOpen, onClose, items = [] }: SearchModal
     setResults(fuseResults.map(r => r.item))
   }, [items])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); setSelected(s => Math.min(s + 1, results.length - 1)) }
     if (e.key === 'ArrowUp')   { e.preventDefault(); setSelected(s => Math.max(s - 1, 0)) }
     if (e.key === 'Enter' && results[selected]) {

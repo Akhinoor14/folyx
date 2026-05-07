@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X, Zap } from 'lucide-react'
@@ -10,8 +11,8 @@ interface NavLink { label: string; href: string }
 interface NavbarProps {
   variant?: 'company' | 'portfolio' | 'admin' | 'boss'
   links?: NavLink[]
-  logo?: React.ReactNode
-  actions?: React.ReactNode
+  logo?: ReactNode
+  actions?: ReactNode
   clientName?: string
 }
 

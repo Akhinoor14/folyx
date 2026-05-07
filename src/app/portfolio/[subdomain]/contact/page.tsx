@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { Mail, Phone, Github, Linkedin, Facebook, Youtube, Send, CheckCircle, AlertCircle } from 'lucide-react'
 import { useParams } from 'next/navigation'
 
@@ -9,12 +9,12 @@ export default function PortfolioContactPage() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setStatus('sending')
     try {
-      const emailjs = await import('emailjs-com')
-      await emailjs.send(
+      const { send } = await import('@emailjs/browser')
+      await send(
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
         { from_name: form.name, from_email: form.email, subject: form.subject, message: form.message, to_subdomain: params.subdomain },

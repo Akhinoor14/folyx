@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { Mail, Phone, Send, CheckCircle, AlertCircle, Facebook, Github, MessageSquare } from 'lucide-react'
 import { APP_CONFIG } from '@/lib/utils'
 
@@ -16,16 +16,16 @@ export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', plan: '', university: '', message: '' })
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setStatus('sending')
     try {
-      const emailjs = await import('emailjs-com')
-      await emailjs.send(
+      const { send } = await import('@emailjs/browser')
+      await send(
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
         {

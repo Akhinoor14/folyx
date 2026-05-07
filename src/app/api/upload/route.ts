@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase'
 import { uploadToR2, R2Keys } from '@/lib/r2'
 
+export const runtime = 'nodejs'
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
@@ -37,7 +39,7 @@ export async function POST(req: NextRequest) {
     } else if (type === 'profile') {
       // Profile photo → Supabase Storage (fast CDN)
       const path = `${subdomain}/profile/${fileId}`
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('portfolios')
         .upload(path, buffer, { contentType: file.type, upsert: true })
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -47,7 +49,7 @@ export async function POST(req: NextRequest) {
     } else {
       // Other images → Supabase Storage
       const path = `${subdomain}/images/${fileId}`
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('portfolios')
         .upload(path, buffer, { contentType: file.type, upsert: true })
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -59,8 +61,4 @@ export async function POST(req: NextRequest) {
   } catch (err: any) {
     return NextResponse.json({ error: err.message || 'Upload failed.' }, { status: 500 })
   }
-}
-
-export const config = {
-  api: { bodyParser: false },
 }

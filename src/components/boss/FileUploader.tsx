@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, type DragEvent } from 'react'
 import { Upload, X, Loader2, CheckCircle, File, Image as ImageIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -43,7 +43,7 @@ export default function FileUploader({
     }
   }, [onUpload, maxSizeMB])
 
-  const onDrop = (e: React.DragEvent) => {
+  const onDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault(); setDragging(false)
     const file = e.dataTransfer.files[0]
     if (file) handleFile(file)

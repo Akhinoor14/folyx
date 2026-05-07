@@ -1,5 +1,6 @@
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
+import type { ReactNode } from 'react'
 import { getClientInfo } from '@/lib/github'
 import type { ClientInfo } from '@/types/client'
 import Navbar from '@/components/shared/Navbar'
@@ -8,7 +9,7 @@ import SplashScreen from '@/components/shared/SplashScreen'
 import CursorEffect from '@/components/shared/CursorEffect'
 
 interface PortfolioLayoutProps {
-  children: React.ReactNode
+  children: ReactNode
   params: { subdomain: string }
 }
 
