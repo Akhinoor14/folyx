@@ -32,7 +32,7 @@ export async function PATCH(req: NextRequest, { params }: Props) {
         if (!client?.boss_email) return NextResponse.json({ error: 'No boss email found.' }, { status: 404 })
         const newPassword = generatePassword(12)
         const { data: users } = await supabase.auth.admin.listUsers()
-        const bossUser = users?.users?.find(u => u.email === client.boss_email)
+        const bossUser = users?.users?.find((u: { email?: string; id: string }) => u.email === client.boss_email)
         if (bossUser) {
           await supabase.auth.admin.updateUserById(bossUser.id, { password: newPassword })
         }
