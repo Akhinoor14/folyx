@@ -1,0 +1,165 @@
+BUG FIX 1: postcss.config.js - CRITICAL, Tailwind won't work without this
+postcss.config.js
+
+BUG FIX 2: admin layout.tsx - missing, causes 404 on admin pages
+layout.tsx
+
+BUG FIX 3: boss layout.tsx - missing, causes 404 on boss pages
+layout.tsx
+
+BUG FIX 4: boss electronics page - was missing entirely
+page.tsx
+
+BUG FIX 5: .gitignore - missing
+.gitignore
+
+BUG FIX 6: Add missing @aws-sdk/client-s3 to package.json
+bash
+
+# Fix package.json - add missing @aws-sdk/client-s3
+cat /home/claude/folyx/package.json | python3 -c "
+import json,sys
+p = json.load(sys.stdin)
+p['dependencies']['@aws-sdk/client-s3'] = '^3.600.0'
+print(json.dumps(p, indent=2))
+" > /tmp/pkg_fixed.json && mv /tmp/pkg_fixed.json /home/claude/folyx/package.json && echo "package.json updated" && grep "aws-sdk" /home/claude/folyx/package.json
+Output
+
+package.json updated
+    "@aws-sdk/client-s3": "^3.600.0"
+
+Verify font-body and other potential CSS bugs
+bash
+
+# Fix globals.css - font-body class needs to be in tailwind extend or utility
+# Check if font-body works via tailwind config's fontFamily.body mapping
+# Tailwind generates font-body from fontFamily: { body: [...] } automatically
+# BUT only if extend has it — let's verify
+
+grep -A 10 "fontFamily" /home/claude/folyx/tailwind.config.ts
+
+echo "---"
+# Check SplashScreen uses 'accent' color that may not exist as text-accent
+grep "text-accent\|bg-accent\|border-accent" /home/claude/folyx/src/components/shared/SplashScreen.tsx
+
+echo "---"
+# Check if 'glow-top' utility class is defined in globals.css
+grep "glow-top" /home/claude/folyx/src/app/globals.css
+Output
+
+      fontFamily: {
+        display: ['var(--font-clash)', 'system-ui', 'sans-serif'],
+        body: ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-jetbrains)', 'monospace'],
+      },
+      backgroundImage: {
+        'grid-folyx': 'radial-gradient(circle, rgba(93,110,245,0.12) 1px, transparent 1px)',
+        'glow-folyx': 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(93,110,245,0.35) 0%, transparent 70%)',
+        'glow-accent': 'radial-gradient(ellipse 60% 40% at 80% 50%, rgba(0,229,255,0.12) 0%, transparent 60%)',
+      },
+      backgroundSize: {
+---
+---
+  .glow-top {
+
+More targeted bug checks
+bash
+
+# Check SplashScreen for 'accent' color class bug
+grep "accent\|from-accent\|to-accent" /home/claude/folyx/src/components/shared/SplashScreen.tsx
+
+echo "---CHECK globals for from-folyx-500 to-accent---"
+grep "to-accent\|from-accent" /home/claude/folyx/src/app/globals.css
+
+echo "---CHECK tailwind has accent color---"
+grep -A3 "accent:" /home/claude/folyx/tailwind.config.ts | head -6
+
+echo "---CHECK portfolio layout - headers() needs dynamic---"
+head -5 /home/claude/folyx/src/app/portfolio/\[subdomain\]/layout.tsx
+
+echo "---CHECK admin dashboard imports ClientActions correctly---"
+grep "ClientActions\|import" /home/claude/folyx/src/app/admin/dashboard/clients/\[id\]/page.tsx | head -8
+Output
+
+            className="h-full bg-gradient-to-r from-folyx-500 to-accent rounded-full"
+---CHECK globals for from-folyx-500 to-accent---
+---CHECK tailwind has accent color---
+        accent: {
+          DEFAULT: '#00e5ff',
+          dark: '#00b8cc',
+        },
+---CHECK portfolio layout - headers() needs dynamic---
+import { headers } from 'next/headers'
+import { notFound } from 'next/navigation'
+import { getClientInfo } from '@/lib/github'
+import type { ClientInfo } from '@/types/client'
+import Navbar from '@/components/shared/Navbar'
+---CHECK admin dashboard imports ClientActions correctly---
+import { createServerClient } from '@/lib/supabase'
+import { redirect, notFound } from 'next/navigation'
+import Link from 'next/link'
+import { ArrowLeft, ExternalLink, Calendar, RefreshCw, PauseCircle, Trash2, Key, Globe } from 'lucide-react'
+import { formatDate, getDaysRemaining, getStatusColor, getPlanEndDate, getSubdomainUrl } from '@/lib/utils'
+import ClientActions from '@/components/admin/ClientActions'
+        <ClientActions client={client} />
+
+Final targeted checks
+bash
+
+# Fix: to-accent needs to be text/bg/from/to with the DEFAULT value
+# In Tailwind, accent.DEFAULT makes `to-accent` work = OK
+
+# Check getSubdomainUrl is exported from utils
+grep "getSubdomainUrl" /home/claude/folyx/src/lib/utils.ts
+
+# Check getPlanEndDate export  
+grep "export function getPlanEndDate\|export.*getPlanEndDate" /home/claude/folyx/src/lib/utils.ts
+
+# Check: SplashScreen uses 'accent' CSS var not Tailwind - need to verify
+grep "var(--accent)\|--accent" /home/claude/folyx/src/app/globals.css | head -3
+
+# Check FolyxLogo import in admin/dashboard/page.tsx
+grep "FolyxLogo\|Navbar" /home/claude/folyx/src/app/admin/dashboard/page.tsx | head -3
+
+# Check Boss dashboard imports Layers
+grep "Layers" /home/claude/folyx/src/app/boss/\[clientId\]/dashboard/page.tsx | head -3
+Output
+
+export function getSubdomainUrl(subdomain: string): string {
+export function getPlanEndDate(plan: keyof typeof PLAN_CONFIG, startDate = new Date()) {
+import { FolyxLogo } from '@/components/shared/Navbar'
+            <FolyxLogo/>
+import { Zap, Box, Code2, Globe, BarChart2, BookOpen, FileText, Video, GraduationCap, Award, Settings, LogOut, User, Layers } from 'lucide-react'
+      { label: 'Electronics', href: 'projects/electronics',  icon: Layers },
+
+Final verification
+bash
+
+# Fix SplashScreen CSS var bug - uses 'accent' which is not defined as CSS var
+# globals.css defines --folyx-accent, not --accent
+# SplashScreen uses: from-folyx-500 to-accent (Tailwind class) - this is OK via tailwind config
+# But also uses 'glow-top' CSS class which IS defined
+
+# Final check - PostCSS
+cat /home/claude/folyx/postcss.config.js
+
+echo "---"
+# Check for any TypeScript errors - missing types
+grep "any\b" /home/claude/folyx/src/app/admin/dashboard/page.tsx | wc -l
+
+echo "---FINAL FILE COUNT---"
+find /home/claude/folyx -type f | grep -v node_modules | grep -v ".next" | grep -v ".git" | wc -l
+Output
+
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+---
+0
+---FINAL FILE COUNT---
+78
+Done
+সব bugs fixed। 
