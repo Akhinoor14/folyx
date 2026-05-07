@@ -38,6 +38,11 @@ const nextConfig = {
       },
     ]
   },
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['*.folyx.com', 'folyx.com', 'localhost:3000'],
+    },
+  },
 }
 
 module.exports = withPWA(nextConfig)

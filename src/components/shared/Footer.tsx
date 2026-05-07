@@ -32,6 +32,11 @@ interface FooterProps {
 
 export default function Footer({ variant = 'company', clientName }: FooterProps) {
   const year = new Date().getFullYear()
+  const companyBaseUrl = APP_CONFIG.url
+  const adminBaseUrl = `https://admin.${APP_CONFIG.domain}`
+  const withCompanyBase = (href: string) => `${companyBaseUrl}${href}`
+  const toCompanyHref = (href: string) => (variant === 'portfolio' ? withCompanyBase(href) : href)
+  const toAdminHref = () => (variant === 'portfolio' ? adminBaseUrl : '/admin')
 
   return (
     <footer className="border-t border-[var(--border)] bg-[var(--bg-1)]">
@@ -70,7 +75,7 @@ export default function Footer({ variant = 'company', clientName }: FooterProps)
               {FOOTER_PAGES.map(({ label, href }) => (
                 <li key={href}>
                   <Link
-                    href={href}
+                    href={toCompanyHref(href)}
                     className="text-sm text-[var(--t2)] hover:text-[var(--t1)] transition-colors"
                   >
                     {label}
@@ -84,17 +89,21 @@ export default function Footer({ variant = 'company', clientName }: FooterProps)
           <div className="space-y-4">
             <h4 className="text-sm font-semibold text-[var(--t1)] tracking-wide">Company</h4>
             <ul className="space-y-2.5">
-              {FOOTER_COMPANY.map(({ label, href }) => (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    className="text-sm text-[var(--t2)] hover:text-[var(--t1)] transition-colors flex items-center gap-1.5"
-                  >
-                    {label}
-                    {href.startsWith('http') && <ExternalLink className="w-3 h-3 opacity-50" />}
-                  </Link>
-                </li>
-              ))}
+              {FOOTER_COMPANY.map(({ label, href }) => {
+                const nextHref = href === '/admin' ? toAdminHref() : toCompanyHref(href)
+                const isExternal = nextHref.startsWith('http')
+                return (
+                  <li key={href}>
+                    <Link
+                      href={nextHref}
+                      className="text-sm text-[var(--t2)] hover:text-[var(--t1)] transition-colors flex items-center gap-1.5"
+                    >
+                      {label}
+                      {isExternal && <ExternalLink className="w-3 h-3 opacity-50" />}
+                    </Link>
+                  </li>
+                )
+              })}
               <li>
                 <a
                   href={`mailto:${APP_CONFIG.email}`}
