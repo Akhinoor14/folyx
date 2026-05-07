@@ -6,6 +6,7 @@ import { formatDate, getDaysRemaining, getStatusColor } from '@/lib/utils'
 import { FolyxLogo } from '@/components/shared/Navbar'
 
 export default async function AdminDashboardPage() {
+  const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'folyx.com'
   const supabase = createServerClient()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session || session.user.user_metadata?.role !== 'admin') redirect('/admin/login')
@@ -68,7 +69,7 @@ export default async function AdminDashboardPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-[var(--t1)]">{c.info?.personal?.full_name || c.subdomain}</p>
-                  <p className="text-xs text-[var(--t3)]">{c.subdomain}.folyx.com · {c.plan} · {formatDate(c.created_at)}</p>
+                  <p className="text-xs text-[var(--t3)]">{c.subdomain}.{appDomain} · {c.plan} · {formatDate(c.created_at)}</p>
                 </div>
                 <div className="hidden sm:block text-right shrink-0">
                   <span className={`badge text-xs border ${getStatusColor(c.status)}`}>{c.status}</span>

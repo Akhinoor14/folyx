@@ -59,10 +59,19 @@ vercel --prod
 
 # Add your domain
 vercel domains add folyx.com
+vercel domains add www.folyx.com
+vercel domains add admin.folyx.com
 vercel domains add *.folyx.com   # wildcard for client subdomains
 ```
 
 Set all environment variables in Vercel Dashboard → Project → Settings → Environment Variables.
+
+Required for multi-tenant domain automation:
+- `NEXT_PUBLIC_APP_DOMAIN` (example: `folyx.com`)
+- `NEXT_PUBLIC_APP_URL` (example: `https://folyx.com`)
+- `VERCEL_API_TOKEN`
+- `VERCEL_PROJECT_ID`
+- `VERCEL_TEAM_ID` (required only if project is under a Vercel team)
 
 ---
 

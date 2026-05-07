@@ -5,6 +5,7 @@ import { Plus, ArrowLeft, ExternalLink } from 'lucide-react'
 import { formatDate, getDaysRemaining, getStatusColor } from '@/lib/utils'
 
 export default async function AdminClientsPage() {
+  const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'folyx.com'
   const supabase = createServerClient()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session || session.user.user_metadata?.role !== 'admin') redirect('/admin/login')
@@ -39,7 +40,7 @@ export default async function AdminClientsPage() {
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-[var(--t1)]">{name}</p>
                   <div className="flex flex-wrap items-center gap-2 mt-0.5">
-                    <span className="text-xs text-[var(--t3)]">{c.subdomain}.folyx.com</span>
+                    <span className="text-xs text-[var(--t3)]">{c.subdomain}.{appDomain}</span>
                     <span className="text-xs text-[var(--t3)]">·</span>
                     <span className="text-xs text-[var(--t3)] capitalize">{c.plan}</span>
                     <span className="text-xs text-[var(--t3)]">·</span>
@@ -55,7 +56,7 @@ export default async function AdminClientsPage() {
                   )}
                 </div>
                 <div className="flex gap-2 shrink-0">
-                  <a href={`https://${c.subdomain}.folyx.com`} target="_blank" rel="noreferrer"
+                  <a href={`https://${c.subdomain}.${appDomain}`} target="_blank" rel="noreferrer"
                      className="w-8 h-8 rounded-lg hover:bg-[var(--bg-3)] flex items-center justify-center text-[var(--t2)] transition-colors">
                     <ExternalLink className="w-3.5 h-3.5"/>
                   </a>

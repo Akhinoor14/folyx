@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, ExternalLink, Star, Code2, Box, Zap } from 'lucide-react'
+import { ArrowRight, ExternalLink, Star } from 'lucide-react'
 
 export const metadata: Metadata = { title: 'Portfolios' }
 
@@ -47,9 +47,8 @@ const SAMPLE_PORTFOLIOS = [
   },
 ]
 
-const CATEGORY_ICONS = { Arduino: Zap, SolidWorks: Box, Programming: Code2, MATLAB: Star }
-
 export default function PortfoliosPage() {
+  const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'folyx.com'
   return (
     <div className="pt-24">
       <section className="section-sm text-center">
@@ -93,7 +92,7 @@ export default function PortfoliosPage() {
                     ))}
                   </div>
                   <a
-                    href={`https://${p.slug}.folyx.com`}
+                    href={`https://${p.slug}.${appDomain}`}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-1.5 text-xs text-folyx-400 hover:text-folyx-300 transition-colors font-medium"

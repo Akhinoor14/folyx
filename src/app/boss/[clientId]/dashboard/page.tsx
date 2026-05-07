@@ -32,6 +32,7 @@ const SECTIONS = [
 ]
 
 export default async function BossDashboardPage({ params }: Props) {
+  const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'folyx.com'
   const supabase = createServerClient()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) redirect(`/boss/${params.clientId}/login`)
@@ -56,7 +57,7 @@ export default async function BossDashboardPage({ params }: Props) {
             {info && <span className="text-[var(--t3)] text-sm">· {info.personal?.display_name}</span>}
           </div>
           <div className="flex items-center gap-2">
-            <a href={`https://${subdomain}.folyx.com`} target="_blank" rel="noreferrer"
+            <a href={`https://${subdomain}.${appDomain}`} target="_blank" rel="noreferrer"
                className="btn btn-ghost text-xs py-1.5 px-3 gap-1">
               <Globe className="w-3.5 h-3.5" /> View Site
             </a>

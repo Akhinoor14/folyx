@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, CheckCircle, Loader2, Zap } from 'lucide-react'
 import type { NewClientFormData } from '@/types/client'
@@ -15,7 +14,7 @@ const EMPTY: NewClientFormData = {
 }
 
 export default function AddClientPage() {
-  const router = useRouter()
+  const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'folyx.com'
   const [step, setStep] = useState(0)
   const [form, setForm] = useState<NewClientFormData>(EMPTY)
   const [creating, setCreating] = useState(false)
@@ -37,7 +36,7 @@ export default function AddClientPage() {
       })
       const data = await res.json()
       if (res.ok) {
-        setResult({ success: true, url: `https://${form.subdomain}.folyx.com` })
+        setResult({ success: true, url: `https://${form.subdomain}.${appDomain}` })
       } else {
         setResult({ success: false, error: data.error || 'Failed to create client.' })
       }
@@ -99,7 +98,7 @@ export default function AddClientPage() {
                 <div><label className="block text-xs text-[var(--t3)] mb-1">Display Name *</label>
                   <input value={form.display_name} onChange={e=>set('display_name',e.target.value)} className="input-folyx" placeholder="Nick / First name"/></div>
               </div>
-              <div><label className="block text-xs text-[var(--t3)] mb-1">Subdomain * <span className="text-folyx-400 ml-1">{form.subdomain}.folyx.com</span></label>
+              <div><label className="block text-xs text-[var(--t3)] mb-1">Subdomain * <span className="text-folyx-400 ml-1">{form.subdomain}.{appDomain}</span></label>
                 <input value={form.subdomain} onChange={e=>set('subdomain',autoSubdomain(e.target.value))} className="input-folyx font-mono" placeholder="name"/></div>
               <div><label className="block text-xs text-[var(--t3)] mb-1">Boss Login Email *</label>
                 <input type="email" value={form.boss_email} onChange={e=>set('boss_email',e.target.value)} className="input-folyx"/></div>
@@ -148,7 +147,7 @@ export default function AddClientPage() {
               <div className="bg-[var(--bg-1)] rounded-xl p-4 space-y-2 text-sm">
                 {[
                   ['Name', form.full_name],
-                  ['Subdomain', `${form.subdomain}.folyx.com`],
+                  ['Subdomain', `${form.subdomain}.${appDomain}`],
                   ['Email', form.boss_email],
                   ['Plan', form.plan],
                   ['University', form.university_short||'—'],

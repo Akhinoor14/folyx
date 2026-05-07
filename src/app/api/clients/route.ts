@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase'
 import { createClientRepo } from '@/lib/github'
-import { generateClientId, generatePassword } from '@/lib/utils'
+import { generateClientId } from '@/lib/utils'
 import type { NewClientFormData, ClientInfo } from '@/types/client'
 
 export async function POST(req: NextRequest) {
   try {
     const body: NewClientFormData & { boss_password: string; end_date: string } = await req.json()
+    const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'folyx.com'
+    const vercelTeamId = process.env.VERCEL_TEAM_ID
+    const vercelTeamQuery = vercelTeamId ? `?teamId=${encodeURIComponent(vercelTeamId)}` : ''
 
     // ── Validate required fields ──
     if (!body.full_name || !body.subdomain || !body.boss_email || !body.plan) {
@@ -55,7 +58,7 @@ export async function POST(req: NextRequest) {
       },
       domain: {
         subdomain: body.subdomain,
-        full_url: `https://${body.subdomain}.folyx.com`,
+        full_url: `https://${body.subdomain}.${appDomain}`,
       },
       subscription: {
         plan: body.plan,
@@ -107,13 +110,13 @@ export async function POST(req: NextRequest) {
 
     // ── 4. Add Vercel subdomain (non-blocking) ──
     if (process.env.VERCEL_API_TOKEN && process.env.VERCEL_PROJECT_ID) {
-      fetch(`https://api.vercel.com/v9/projects/${process.env.VERCEL_PROJECT_ID}/domains`, {
+      fetch(`https://api.vercel.com/v9/projects/${process.env.VERCEL_PROJECT_ID}/domains${vercelTeamQuery}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${process.env.VERCEL_API_TOKEN}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: `${body.subdomain}.folyx.com` }),
+        body: JSON.stringify({ name: `${body.subdomain}.${appDomain}` }),
       }).catch(console.error)
     }
 
@@ -122,7 +125,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       client_id: clientRow.id,
-      url: `https://${body.subdomain}.folyx.com`,
+      url: `https://${body.subdomain}.${appDomain}`,
       message: 'Client created successfully.',
     })
   } catch (err: any) {

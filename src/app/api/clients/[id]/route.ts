@@ -8,6 +8,9 @@ export async function PATCH(req: NextRequest, { params }: Props) {
   try {
     const { action, ...body } = await req.json()
     const supabase = createAdminClient()
+    const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'folyx.com'
+    const vercelTeamId = process.env.VERCEL_TEAM_ID
+    const vercelTeamQuery = vercelTeamId ? `?teamId=${encodeURIComponent(vercelTeamId)}` : ''
 
     switch (action) {
       case 'extend': {
@@ -43,7 +46,7 @@ export async function PATCH(req: NextRequest, { params }: Props) {
         // Remove Vercel domain
         if (process.env.VERCEL_API_TOKEN && process.env.VERCEL_PROJECT_ID && client?.subdomain) {
           await fetch(
-            `https://api.vercel.com/v9/projects/${process.env.VERCEL_PROJECT_ID}/domains/${client.subdomain}.folyx.com`,
+            `https://api.vercel.com/v9/projects/${process.env.VERCEL_PROJECT_ID}/domains/${client.subdomain}.${appDomain}${vercelTeamQuery}`,
             { method: 'DELETE', headers: { Authorization: `Bearer ${process.env.VERCEL_API_TOKEN}` } }
           ).catch(() => {})
         }

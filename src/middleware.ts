@@ -3,6 +3,7 @@ import { createServerClient } from '@supabase/ssr'
 
 const ADMIN_SUBDOMAIN = 'admin'
 const WWW_SUBDOMAIN = 'www'
+const APP_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN || 'folyx.com'
 
 function withPrefix(pathname: string, prefix: string) {
   if (pathname === prefix || pathname.startsWith(`${prefix}/`)) return pathname
@@ -11,7 +12,7 @@ function withPrefix(pathname: string, prefix: string) {
 }
 
 export async function middleware(req: NextRequest) {
-  const hostname = req.headers.get('host') || ''
+  const hostname = req.headers.get('x-forwarded-host') || req.headers.get('host') || ''
   const pathname = req.nextUrl.pathname
 
   // Skip static files and API routes
@@ -24,8 +25,12 @@ export async function middleware(req: NextRequest) {
   }
 
   // Extract subdomain
-  const hostWithoutPort = hostname.split(':')[0]
+  const hostWithoutPort = hostname.split(':')[0].toLowerCase()
   const isLocalDev = hostWithoutPort === 'localhost' || hostWithoutPort === '127.0.0.1'
+  const isPreviewHost = hostWithoutPort.endsWith('.vercel.app')
+  const isAppDomainHost =
+    hostWithoutPort === APP_DOMAIN ||
+    hostWithoutPort.endsWith(`.${APP_DOMAIN}`)
 
   // Local dev: use query param ?subdomain=name for testing
   let subdomain = ''
@@ -40,7 +45,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // ── Company website (folyx.com or www.folyx.com or no subdomain) ──
-  if (!subdomain || subdomain === WWW_SUBDOMAIN) {
+  if (!subdomain || subdomain === WWW_SUBDOMAIN || isPreviewHost || !isAppDomainHost) {
     if (
       pathname.startsWith('/admin') ||
       pathname.startsWith('/boss') ||

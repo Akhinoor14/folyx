@@ -1,13 +1,14 @@
 import { createServerClient } from '@/lib/supabase'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, ExternalLink, Calendar, RefreshCw, PauseCircle, Trash2, Key, Globe } from 'lucide-react'
-import { formatDate, getDaysRemaining, getStatusColor, getPlanEndDate, getSubdomainUrl } from '@/lib/utils'
+import { ArrowLeft, ExternalLink } from 'lucide-react'
+import { formatDate, getDaysRemaining, getStatusColor } from '@/lib/utils'
 import ClientActions from '@/components/admin/ClientActions'
 
 interface Props { params: { id: string } }
 
 export default async function ClientDetailPage({ params }: Props) {
+  const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'folyx.com'
   const supabase = createServerClient()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session || session.user.user_metadata?.role !== 'admin') redirect('/admin/login')
@@ -30,9 +31,9 @@ export default async function ClientDetailPage({ params }: Props) {
           <Link href="/admin/dashboard/clients" className="btn btn-ghost p-2"><ArrowLeft className="w-4 h-4"/></Link>
           <div>
             <h1 className="text-xl font-bold text-[var(--t1)]">{info?.personal?.full_name || client.subdomain}</h1>
-            <p className="text-xs text-[var(--t3)]">{client.subdomain}.folyx.com</p>
+            <p className="text-xs text-[var(--t3)]">{client.subdomain}.{appDomain}</p>
           </div>
-          <a href={`https://${client.subdomain}.folyx.com`} target="_blank" rel="noreferrer"
+          <a href={`https://${client.subdomain}.${appDomain}`} target="_blank" rel="noreferrer"
              className="btn btn-outline text-xs py-1.5 px-3 gap-1.5 ml-auto">
             <ExternalLink className="w-3.5 h-3.5"/>View Site
           </a>
